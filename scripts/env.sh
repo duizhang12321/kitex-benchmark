@@ -2,9 +2,9 @@
 set -e
 
 # benchmark params
-n=20000000
+n=2000000000
 body=(1024)
-concurrent=(100 200 400 600 800 1000)
+concurrent=(100)
 sleep=0
 
 CURDIR=$(cd $(dirname $0); pwd)

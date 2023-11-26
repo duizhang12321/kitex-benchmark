@@ -29,6 +29,9 @@ import (
 	"github.com/cloudwego/kitex-benchmark/codec/thrift/kitex_gen/echo/echoserver"
 	"github.com/cloudwego/kitex-benchmark/perf"
 	"github.com/cloudwego/kitex-benchmark/runner"
+
+	"os"
+	"runtime/trace"
 )
 
 const (
@@ -55,6 +58,23 @@ func (s *EchoServerImpl) TestObj(ctx context.Context, req *echo.ObjReq) (*echo.O
 }
 
 func main() {
+	// add tracer
+	f, terr := os.Create("trace.out")
+	if terr != nil {
+        log.Fatalf("failed to create trace output file: %v", terr)
+    }
+    defer func() {
+        if terr := f.Close(); terr != nil {
+            log.Fatalf("failed to close trace file: %v", terr)
+        }
+    }()
+    if terr := trace.Start(f); terr != nil {
+        log.Fatalf("failed to start trace: %v", terr)
+    }
+    defer trace.Stop()
+
+
+
 	// start pprof server
 	go func() {
 		perf.ServeMonitor(fmt.Sprintf(":%d", port+10000))
