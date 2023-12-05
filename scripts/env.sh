@@ -2,9 +2,9 @@
 set -e
 
 # benchmark params
-n=20000000
+n=20000
 body=(1024)
-concurrent=(100 200 400 600 800 1000)
+concurrent=(1 2 4 8 16 32 64)
 sleep=0
 
 CURDIR=$(cd $(dirname $0); pwd)
@@ -33,6 +33,9 @@ if [ -x "$(command -v numactl)" ]; then
   scpu_cmd="numactl -C ${node0} -m 0"
   ccpu_cmd="numactl -C ${node1} -m 1"
 fi
+
+# scpu_cmd="numactl -C 0 -m 0"
+# ccpu_cmd="numactl -C 32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47 -m 1"
 
 # GO
 GOEXEC=${GOEXEC:-"go"}
