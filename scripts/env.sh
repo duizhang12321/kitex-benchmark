@@ -2,9 +2,9 @@
 set -e
 
 # benchmark params
-n=20000
+n=2000
 body=(1024)
-concurrent=(1 2 4 8 16 32 64)
+concurrent=(1)
 sleep=0
 
 CURDIR=$(cd $(dirname $0); pwd)
@@ -14,28 +14,28 @@ if ! [ -x "$(command -v taskset)" ]; then
   exit 1
 fi
 
-# cpu binding
-nprocs=$(getconf _NPROCESSORS_ONLN)
-if [ $nprocs -lt 4 ]; then
-  echo "Error: your environment should have at least 4 processors"
-  exit 1
-elif [ $nprocs -gt 20 ]; then
-  nprocs=20
-fi
-scpu=$((nprocs > 16 ? 4 : nprocs / 4)) # max is 4 cpus
-ccpu=$((nprocs-scpu))
-scpu_cmd="taskset -c 0-$((scpu-1))"
-ccpu_cmd="taskset -c ${scpu}-$((ccpu-1))"
-if [ -x "$(command -v numactl)" ]; then
-  # use numa affinity
-  node0=$(numactl -H | grep "node 0" | head -n 1 | cut -f "4-$((3+scpu))" -d ' ' --output-delimiter ',')
-  node1=$(numactl -H | grep "node 1" | head -n 1 | cut -f "4-$((3+ccpu))" -d ' ' --output-delimiter ',')
-  scpu_cmd="numactl -C ${node0} -m 0"
-  ccpu_cmd="numactl -C ${node1} -m 1"
-fi
+# # cpu binding
+# nprocs=$(getconf _NPROCESSORS_ONLN)
+# if [ $nprocs -lt 4 ]; then
+#   echo "Error: your environment should have at least 4 processors"
+#   exit 1
+# elif [ $nprocs -gt 20 ]; then
+#   nprocs=20
+# fi
+# scpu=$((nprocs > 16 ? 4 : nprocs / 4)) # max is 4 cpus
+# ccpu=$((nprocs-scpu))
+# scpu_cmd="taskset -c 0-$((scpu-1))"
+# ccpu_cmd="taskset -c ${scpu}-$((ccpu-1))"
+# if [ -x "$(command -v numactl)" ]; then
+#   # use numa affinity
+#   node0=$(numactl -H | grep "node 0" | head -n 1 | cut -f "4-$((3+scpu))" -d ' ' --output-delimiter ',')
+#   node1=$(numactl -H | grep "node 1" | head -n 1 | cut -f "4-$((3+ccpu))" -d ' ' --output-delimiter ',')
+#   scpu_cmd="numactl -C ${node0} -m 0"
+#   ccpu_cmd="numactl -C ${node1} -m 1"
+# fi
 
-# scpu_cmd="numactl -C 0 -m 0"
-# ccpu_cmd="numactl -C 32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47 -m 1"
+scpu_cmd="numactl -C 0 -m 0"
+ccpu_cmd="numactl -C 32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47 -m 1"
 
 # GO
 GOEXEC=${GOEXEC:-"go"}
