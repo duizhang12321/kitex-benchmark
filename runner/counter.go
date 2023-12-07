@@ -72,14 +72,15 @@
 	 tp99, _ := stats.Percentile(costs, 99)
 	 tp999, _ := stats.Percentile(costs, 99.9)
 	 mean, _ := stats.Mean(costs)
+	 tp50, _ := stats.Percentile(costs, 50)
  
 	 var result string
 	 if tp999/1000 < 1 {
-		 result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d), Avg Lat: %.2fus",
-			 title, tps, tp99/1000, tp999/1000, echoSize, concurrent, total, mean/1000)
+		 result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fus, TP999: %.2fus (b=%d Byte, c=%d, n=%d), Avg Lat: %.2fus, TP50: %.2fus",
+			 title, tps, tp99/1000, tp999/1000, echoSize, concurrent, total, mean/1000, tp50/1000)
 	 } else {
-		 result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d), Avg Lat: %.2fus",
-			 title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, total, mean/1000)
+		 result = fmt.Sprintf("[%s]: TPS: %.2f, TP99: %.2fms, TP999: %.2fms (b=%d Byte, c=%d, n=%d), Avg Lat: %.2fus, TP50: %.2fus",
+			 title, tps, tp99/1000000, tp999/1000000, echoSize, concurrent, total, mean/1000, tp50/1000)
 	 }
 	 logInfo(result)
 	 return nil
