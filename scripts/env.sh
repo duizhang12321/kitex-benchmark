@@ -2,7 +2,7 @@
 set -e
 
 # benchmark params
-n=10000
+n=300000
 body=(1024)
 concurrent=(1)
 sleep=0
@@ -34,8 +34,8 @@ fi
 #   ccpu_cmd="numactl -C ${node1} -m 1"
 # fi
 
-scpu_cmd="numactl -C 0 -m 0"
-ccpu_cmd="numactl -C 32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47 -m 1"
+scpu_cmd="numactl -C 1 -m 0"
+ccpu_cmd="numactl -C 16-17 -m 0"
 
 # GO
 GOEXEC=${GOEXEC:-"go"}
