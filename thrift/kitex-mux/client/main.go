@@ -18,9 +18,31 @@ package main
 
 import (
 	"github.com/cloudwego/kitex-benchmark/runner"
+
+	"os"
+	"log"
+	"runtime/trace"
 )
 
 // main is use for routing.
 func main() {
+
+	// add tracer
+	f, terr := os.Create("trace.out")
+	if terr != nil {
+        log.Fatalf("failed to create trace output file: %v", terr)
+    }
+    defer func() {
+        if terr := f.Close(); terr != nil {
+            log.Fatalf("failed to close trace file: %v", terr)
+        }
+    }()
+    if terr := trace.Start(f); terr != nil {
+        log.Fatalf("failed to start trace: %v", terr)
+    }
+    defer trace.Stop()
+
+
+
 	runner.Main("KITEX-MUX", NewThriftKiteXClient)
 }
